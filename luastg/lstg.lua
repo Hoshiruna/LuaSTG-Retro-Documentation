@@ -284,6 +284,12 @@ M.SetBGMVolume = AudioSystem.SetBGMVolume
 
 --------------------------------------------------------------------------------
 
+local DiscordRPC = require("discord_rpc")
+
+M.DiscordRPC = DiscordRPC
+
+--------------------------------------------------------------------------------
+
 local Input = require("legacy.Input")
 
 M.GetKeyState = Input.GetKeyState
