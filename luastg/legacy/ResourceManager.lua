@@ -90,6 +90,14 @@ end
 function M.LoadTexture(texname, filepath, mipmap)
 end
 
+--- 从文件加载静音视频，作为动态纹理资源使用  
+--- 支持的容器和编码取决于 Windows Media Foundation  
+---@param videoname string
+---@param filepath string
+---@param loop boolean?
+function M.LoadVideo(videoname, filepath, loop)
+end
+
 --- [LuaSTG Sub 更改]  
 --- 创建渲染目标  
 --- 不提供宽高参数时，创建的渲染目标大小与窗口大小一致，且会自动调整大小  
@@ -111,6 +119,45 @@ end
 ---@param texname string
 ---@return number, number
 function M.GetTextureSize(texname)
+end
+
+---@alias lstg.VideoStatus '"stopped"' | '"playing"' | '"paused"' | '"ended"'
+
+---@param videoname string
+---@param restart boolean? @默认为 true
+function M.PlayVideo(videoname, restart)
+end
+
+---@param videoname string
+function M.PauseVideo(videoname)
+end
+
+---@param videoname string
+function M.ResumeVideo(videoname)
+end
+
+---@param videoname string
+function M.StopVideo(videoname)
+end
+
+---@param videoname string
+---@param seconds number
+function M.SeekVideo(videoname, seconds)
+end
+
+---@param videoname string
+---@return lstg.VideoStatus
+function M.GetVideoState(videoname)
+end
+
+---@param videoname string
+---@return number
+function M.GetVideoTime(videoname)
+end
+
+---@param videoname string
+---@return number
+function M.GetVideoDuration(videoname)
 end
 
 --- [LuaSTG Ex Plus 新增]  
