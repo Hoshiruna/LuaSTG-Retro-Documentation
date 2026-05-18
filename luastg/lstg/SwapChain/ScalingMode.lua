@@ -7,6 +7,6 @@ local E = {
     --- Fit the canvas with aspect ratio preserved and prefer crisp pixel output.
     --- When a whole-number scale of at least 1x fits, the canvas is snapped to the largest such scale and uses point sampling.
     --- When no whole-number scale fits, this falls back to normal aspect-ratio scaling.
-    use_point_sampler = 2,
+    integer_aspect_ratio = 2,
 }
 return E
