@@ -1,89 +1,147 @@
 --------------------------------------------------------------------------------
---- SQLite3 database support
+--- LuaSQL SQLite3 support
 --- LuaSTG Retro built-in module
 --------------------------------------------------------------------------------
 
----@diagnostic disable: missing-return
+---@diagnostic disable: missing-return, duplicate-set-field
 
----@alias sqlite.openmode '"r"' | '"readonly"' | '"rw"' | '"readwrite"' | '"rwc"' | '"create"' | '"readwrite_create"'
----@alias sqlite.value nil | boolean | number | string | sqlite.null
----@alias sqlite.params sqlite.value[]
----@alias sqlite.row table<string, sqlite.value>
-
----@class sqlite.null : userdata
-
----@class sqlite.database
-local database = {}
-
---- Close the database handle.
----
---- Calling close more than once is valid. Methods other than isOpen will raise an error
---- after the database is closed.
-function database:close()
-end
-
---- Returns whether the database handle is still open.
----@return boolean
-function database:isOpen()
-end
-
---- Execute a SQL statement and return true when it succeeds.
----
---- Parameters are positional and are bound to '?' placeholders. Use sqlite.null
---- when a parameter should be SQL NULL.
----@param sql string
----@param params sqlite.params
----@return boolean
----@overload fun(self:sqlite.database, sql:string):boolean
-function database:exec(sql, params)
-end
-
---- Execute a SQL query and return all rows.
----
---- Each row is a table keyed by column name. SQL NULL values are returned as
---- sqlite.null because Lua table fields cannot store nil.
----@param sql string
----@param params sqlite.params
----@return sqlite.row[]
----@overload fun(self:sqlite.database, sql:string):sqlite.row[]
-function database:query(sql, params)
-end
-
---- Run a function inside a transaction.
----
---- The transaction commits when the callback returns normally. If the callback
---- raises an error, the transaction rolls back and the error is re-raised.
----@generic T...
----@param callback fun(db:sqlite.database):T...
----@return T...
-function database:transaction(callback)
-end
-
----@class sqlite
+---@class luasql.sqlite3.driver
 local M = {}
-sqlite = M
 
---- SQL NULL sentinel used for parameter binding and query results.
----@type sqlite.null
-M.null = nil
+---@class luasql.sqlite3.environment
+local environment = {}
 
---- SQLite library version string.
----@type string
-M.version = ""
+---@class luasql.sqlite3.connection
+local connection = {}
 
---- SQLite numeric version.
----@type integer
-M.versionNumber = 0
+---@class luasql.sqlite3.cursor
+local cursor = {}
 
---- Open a SQLite database.
+--------------------------------------------------------------------------------
+--- Driver
+
+--- Create a SQLite3 environment.
+---@return luasql.sqlite3.environment
+function M.sqlite3()
+end
+
+--------------------------------------------------------------------------------
+--- Environment
+
+--- Open a SQLite3 database connection.
 ---
---- Default mode is read/write/create. The path is a normal operating-system
---- filesystem path, not a LuaSTG resource package path.
+--- The path is a normal operating-system filesystem path, not a LuaSTG
+--- resource package path. When `read_only` is true, the database is opened
+--- read-only. `lock_timeout` is in milliseconds.
 ---@param path string
----@param mode sqlite.openmode
----@return sqlite.database
----@overload fun(path:string):sqlite.database
-function M.open(path, mode)
+---@param lock_timeout number?
+---@param read_only boolean?
+---@return luasql.sqlite3.connection|nil
+---@return string|nil
+function environment:connect(path, lock_timeout, read_only)
+end
+
+--- Close the environment.
+---@return boolean
+---@return string|nil
+function environment:close()
+end
+
+--------------------------------------------------------------------------------
+--- Connection
+
+--- Execute a SQL statement.
+---
+--- For statements that produce rows, returns a cursor. For statements that do
+--- not produce rows, returns the number of changed rows.
+---@param statement string
+---@return luasql.sqlite3.cursor|number|nil
+---@return string|nil
+function connection:execute(statement)
+end
+
+--- Execute a SQL statement with positional parameters.
+---@param statement string
+---@vararg nil|boolean|number|string
+---@return luasql.sqlite3.cursor|number|nil
+---@return string|nil
+function connection:execute(statement, ...)
+end
+
+--- Execute a SQL statement with parameters from a table.
+---
+--- Table keys may be positional integer indexes or SQLite named parameter
+--- names, such as `":name"`.
+---@param statement string
+---@param parameters table<integer|string, nil|boolean|number|string>
+---@return luasql.sqlite3.cursor|number|nil
+---@return string|nil
+function connection:execute(statement, parameters)
+end
+
+--- Close the connection.
+---@return boolean
+---@return string|nil
+function connection:close()
+end
+
+--- Commit the current transaction.
+---@return boolean|nil
+---@return string|nil
+function connection:commit()
+end
+
+--- Roll back the current transaction.
+---@return boolean|nil
+---@return string|nil
+function connection:rollback()
+end
+
+--- Enable or disable auto-commit.
+---@param enabled boolean
+---@return boolean
+function connection:setautocommit(enabled)
+end
+
+--- Escape a string for direct SQL text construction.
+---@param value string
+---@return string|nil
+function connection:escape(value)
+end
+
+--- Return the last inserted row id.
+---@return number
+function connection:getlastautoid()
+end
+
+--------------------------------------------------------------------------------
+--- Cursor
+
+--- Fetch the next row.
+---
+--- Without a table argument, returns one value per column. With a table
+--- argument, copies values into that table and returns it. `mode` controls
+--- numeric keys (`"n"`), column-name keys (`"a"`), or both (`"an"`).
+---@param row table?
+---@param mode '"n"'|'"a"'|'"an"'?
+---@return table|any|nil
+function cursor:fetch(row, mode)
+end
+
+--- Close the cursor.
+---@return boolean
+---@return string|nil
+function cursor:close()
+end
+
+--- Return column names.
+---@return string[]
+function cursor:getcolnames()
+end
+
+--- Return column types.
+---@return string[]
+function cursor:getcoltypes()
 end
 
 --------------------------------------------------------------------------------
@@ -91,24 +149,23 @@ end
 
 --[[
 
-local sqlite = require("sqlite")
+local driver = require("luasql.sqlite3")
 
-local db = sqlite.open("save/player.db")
-db:exec("CREATE TABLE IF NOT EXISTS scores(name TEXT, score INTEGER, note TEXT)")
-db:exec("INSERT INTO scores VALUES (?, ?, ?)", { "player", 100, sqlite.null })
+local env = assert(driver.sqlite3())
+local conn = assert(env:connect("save/player.db"))
 
-local rows = db:query("SELECT name, score, note FROM scores")
-for _, row in ipairs(rows) do
-    if row.note == sqlite.null then
-        print(row.name, row.score, "no note")
-    end
+assert(conn:execute("CREATE TABLE IF NOT EXISTS scores(name TEXT, score INTEGER, note TEXT)"))
+assert(conn:execute("INSERT INTO scores VALUES (?, ?, ?)", "player", 100, nil))
+
+local cur = assert(conn:execute("SELECT name, score, note FROM scores"))
+local row = {}
+while cur:fetch(row, "a") do
+    print(row.name, row.score, row.note)
 end
 
-db:transaction(function(tx)
-    tx:exec("UPDATE scores SET score = ? WHERE name = ?", { 200, "player" })
-end)
-
-db:close()
+cur:close()
+conn:close()
+env:close()
 
 --]]
 
