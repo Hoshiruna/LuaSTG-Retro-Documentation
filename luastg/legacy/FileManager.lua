@@ -49,6 +49,16 @@ function M.GetArchive(archivename)
 end
 
 --------------------------------------------------------------------------------
+--- 异步文件读取
+
+---异步读取文件内容
+---完成后调用 job:read()，成功时返回二进制字符串
+---@param filepath string
+---@return lstg.AsyncResourceJob
+function M.ReadFileAsync(filepath)
+end
+
+--------------------------------------------------------------------------------
 --- 文件判断和文件枚举
 --- Check file exists; list files and directories
 

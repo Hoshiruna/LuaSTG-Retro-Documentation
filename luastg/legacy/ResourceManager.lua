@@ -90,12 +90,28 @@ end
 function M.LoadTexture(texname, filepath, mipmap)
 end
 
+--- 异步从文件加载纹理
+---@param texname string
+---@param filepath string
+---@param mipmap boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadTextureAsync(texname, filepath, mipmap)
+end
+
 --- 从文件加载静音视频，作为动态纹理资源使用  
 --- 支持的容器和编码取决于 Windows Media Foundation  
 ---@param videoname string
 ---@param filepath string
 ---@param loop boolean?
 function M.LoadVideo(videoname, filepath, loop)
+end
+
+--- 异步从文件加载静音视频，作为动态纹理资源使用
+---@param videoname string
+---@param filepath string
+---@param loop boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadVideoAsync(videoname, filepath, loop)
 end
 
 --- [LuaSTG Sub 更改]  
@@ -209,6 +225,21 @@ end
 function M.LoadImage(imgname, texname, x, y, width, height, a, b, rect)
 end
 
+--- 异步从纹理加载图片精灵
+---@see lstg.LoadImage
+---@param imgname string
+---@param texname string
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadImageAsync(imgname, texname, x, y, width, height, a, b, rect)
+end
+
 --- 更改图片精灵渲染时使用的混合模式和顶点颜色  
 --- 如果提供 4 个颜色参数，则对图片精灵的 4 个顶点分别设置颜色  
 ---@param imgname string
@@ -285,6 +316,24 @@ end
 function M.LoadAnimation(sprite_sequence_name, texture_name, x, y, width, height, col, row, interval, a, b, rect)
 end
 
+--- 异步从纹理加载图片序列
+---@see lstg.LoadAnimation
+---@param sprite_sequence_name string
+---@param texture_name string
+---@param x number
+---@param y number
+---@param width number 单张图片宽度
+---@param height number 单张图片高度
+---@param col number 列数
+---@param row number 行数
+---@param interval number 每张图片持续显示的帧数
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadAnimationAsync(sprite_sequence_name, texture_name, x, y, width, height, col, row, interval, a, b, rect)
+end
+
 --- [LuaSTG Sub v0.21.101 新增]  
 --- 从已有的图片精灵加载图片序列  
 --- 提醒：该方法会复制图片精灵的副本来使用，而不是引用原图片精灵  
@@ -297,6 +346,18 @@ end
 ---@param b number?
 ---@param rect boolean?
 function M.LoadAnimation(sprite_sequence_name, sprite_names, interval, a, b, rect)
+end
+
+--- 异步从已有的图片精灵加载图片序列
+---@see lstg.LoadAnimation
+---@param sprite_sequence_name string
+---@param sprite_names string[] 图片列表
+---@param interval integer 每张图片持续显示的帧数
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadAnimationAsync(sprite_sequence_name, sprite_names, interval, a, b, rect)
 end
 
 --- 更改动画渲染时使用的混合模式和顶点颜色  
@@ -347,6 +408,24 @@ end
 function M.LoadPS(psname, filepath, imgname)
 end
 
+--- 异步从文件加载 HGE 粒子特效
+---@param psname string
+---@param filepath string
+---@param imgname string @粒子使用的图片精灵
+---@return lstg.AsyncResourceJob
+---@overload fun(psname:string, filepath:string, imgname:string, a:number, b:number, rect:number):lstg.AsyncResourceJob
+function M.LoadPSAsync(psname, filepath, imgname)
+end
+
+--- 异步从表加载 HGE 粒子特效
+---@param psname string
+---@param info table
+---@param imgname string @粒子使用的图片精灵
+---@return lstg.AsyncResourceJob
+---@overload fun(psname:string, info:table, imgname:string, a:number, b:number, rect:number):lstg.AsyncResourceJob
+function M.LoadPSAsync(psname, info, imgname)
+end
+
 --------------------------------------------------------------------------------
 --- 纹理字体
 
@@ -359,6 +438,23 @@ end
 function M.LoadFont(fntname, filepath, mipmap)
 end
 
+--- 异步从文件加载 HGE 纹理字体
+---@param fntname string
+---@param filepath string
+---@param mipmap boolean? @若不提供该参数，则默认为 true
+---@return lstg.AsyncResourceJob
+function M.LoadFontAsync(fntname, filepath, mipmap)
+end
+
+--- 异步加载 fancy2d 纹理字体
+---@param fntname string
+---@param filepath string
+---@param texture_filepath string
+---@param mipmap boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadFontAsync(fntname, filepath, texture_filepath, mipmap)
+end
+
 --- 更改 HGE 纹理字体渲染时使用的混合模式和顶点颜色
 ---@param fntname string
 ---@param blendmode lstg.BlendMode
@@ -369,12 +465,41 @@ end
 --------------------------------------------------------------------------------
 --- 矢量字体
 
+---@class lstg.TrueTypeFontInfo
+---@field source string?
+---@field font_face integer?
+---@field width number?
+---@field height number?
+
 --- 从文件加载矢量字体，宽度和高度单位为像素
 ---@param ttfname string
 ---@param filepath string
 ---@param width number
 ---@param height number
 function M.LoadTTF(ttfname, filepath, width, height)
+end
+
+--- 异步从文件加载矢量字体，宽度和高度单位为像素
+---@param ttfname string
+---@param filepath string
+---@param width number
+---@param height number
+---@return lstg.AsyncResourceJob
+function M.LoadTTFAsync(ttfname, filepath, width, height)
+end
+
+--- 加载矢量字体
+---@param ttfname string
+---@param fonts lstg.TrueTypeFontInfo[]
+---@return boolean
+function M.LoadTrueTypeFont(ttfname, fonts)
+end
+
+--- 异步加载矢量字体
+---@param ttfname string
+---@param fonts lstg.TrueTypeFontInfo[]
+---@return lstg.AsyncResourceJob
+function M.LoadTrueTypeFontAsync(ttfname, fonts)
 end
 
 --- 仅用于矢量字体  
@@ -393,6 +518,13 @@ end
 function M.LoadSound(sndname, filepath)
 end
 
+--- 异步从文件加载音效
+---@param sndname string
+---@param filepath string
+---@return lstg.AsyncResourceJob
+function M.LoadSoundAsync(sndname, filepath)
+end
+
 --------------------------------------------------------------------------------
 --- 背景音乐
 
@@ -405,6 +537,16 @@ end
 function M.LoadMusic(bgmname, filepath, loopend, looplength)
 end
 
+--- 异步从文件加载背景音乐
+---@param bgmname string
+---@param filepath string
+---@param loopend number @循环区间的结束位置(秒)
+---@param looplength number @循环区间的长度(秒)
+---@param once_decode boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadMusicAsync(bgmname, filepath, loopend, looplength, once_decode)
+end
+
 --------------------------------------------------------------------------------
 --- 屏幕后处理
 
@@ -412,6 +554,13 @@ end
 ---@param fxname string
 ---@param filepath string
 function M.LoadFX(fxname, filepath)
+end
+
+--- 异步从文件编译并加载 Direct3D 11 Pixel Shader HLSL 文件
+---@param fxname string
+---@param filepath string
+---@return lstg.AsyncResourceJob
+function M.LoadFXAsync(fxname, filepath)
 end
 
 --------------------------------------------------------------------------------
@@ -429,6 +578,13 @@ end
 ---@param modname string
 ---@param gltfpath string
 function M.LoadModel(modname, gltfpath)
+end
+
+--- 异步从文件加载 glTF 模型文件
+---@param modname string
+---@param gltfpath string
+---@return lstg.AsyncResourceJob
+function M.LoadModelAsync(modname, gltfpath)
 end
 
 --------------------------------------------------------------------------------
@@ -453,5 +609,18 @@ end
 function ResourceManager.getCurrentResourceCollection()
     ---@diagnostic disable-next-line: missing-return
 end
+
+ResourceManager.LoadTextureAsync = M.LoadTextureAsync
+ResourceManager.LoadVideoAsync = M.LoadVideoAsync
+ResourceManager.LoadImageAsync = M.LoadImageAsync
+ResourceManager.LoadAnimationAsync = M.LoadAnimationAsync
+ResourceManager.LoadPSAsync = M.LoadPSAsync
+ResourceManager.LoadSoundAsync = M.LoadSoundAsync
+ResourceManager.LoadMusicAsync = M.LoadMusicAsync
+ResourceManager.LoadFontAsync = M.LoadFontAsync
+ResourceManager.LoadTTFAsync = M.LoadTTFAsync
+ResourceManager.LoadTrueTypeFontAsync = M.LoadTrueTypeFontAsync
+ResourceManager.LoadFXAsync = M.LoadFXAsync
+ResourceManager.LoadModelAsync = M.LoadModelAsync
 
 return M
