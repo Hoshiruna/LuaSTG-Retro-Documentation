@@ -180,21 +180,10 @@ M.ActiveWorlds = GameObjectManager.ActiveWorlds
 require("legacy.ResourceTexture")
 require("legacy.ResourceSprite")
 require("legacy.ResourceSpriteSequence")
-require("legacy.ResourceCollection")
+require("legacy.ResourcePool")
 local ResourceManager = require("legacy.ResourceManager")
 
 M.SetResLoadInfo = ResourceManager.SetResLoadInfo
-M.SetResourceStatus = ResourceManager.SetResourceStatus
-M.GetResourceStatus = ResourceManager.GetResourceStatus
-M.RemoveResource = ResourceManager.RemoveResource
-M.CheckRes = ResourceManager.CheckRes
-M.EnumRes = ResourceManager.EnumRes
-
-M.LoadTexture = ResourceManager.LoadTexture
-M.LoadTextureAsync = ResourceManager.LoadTextureAsync
-M.LoadVideo = ResourceManager.LoadVideo
-M.LoadVideoAsync = ResourceManager.LoadVideoAsync
-M.CreateRenderTarget = ResourceManager.CreateRenderTarget
 M.IsRenderTarget = ResourceManager.IsRenderTarget
 M.GetTextureSize = ResourceManager.GetTextureSize
 M.PlayVideo = ResourceManager.PlayVideo
@@ -207,46 +196,22 @@ M.GetVideoTime = ResourceManager.GetVideoTime
 M.GetVideoDuration = ResourceManager.GetVideoDuration
 M.SaveTexture = ResourceManager.SaveTexture
 M.Snapshot = ResourceManager.Snapshot
+M.SetTexturePreMulAlphaState = ResourceManager.SetTexturePreMulAlphaState
 M.SetTextureSamplerState = ResourceManager.SetTextureSamplerState
 
-M.LoadImage = ResourceManager.LoadImage
-M.LoadImageAsync = ResourceManager.LoadImageAsync
 M.SetImageState = ResourceManager.SetImageState
 M.SetImageCenter = ResourceManager.SetImageCenter
 M.SetImageScale = ResourceManager.SetImageScale
 M.GetImageScale = ResourceManager.GetImageScale
 
-M.LoadAnimation = ResourceManager.LoadAnimation
-M.LoadAnimationAsync = ResourceManager.LoadAnimationAsync
 M.SetAnimationState = ResourceManager.SetAnimationState
 M.SetAnimationCenter = ResourceManager.SetAnimationCenter
 M.SetAnimationScale = ResourceManager.SetAnimationScale
 M.GetAnimationScale = ResourceManager.GetAnimationScale
 
-M.LoadPS = ResourceManager.LoadPS
-M.LoadPSAsync = ResourceManager.LoadPSAsync
-
-M.LoadFont = ResourceManager.LoadFont
-M.LoadFontAsync = ResourceManager.LoadFontAsync
 M.SetFontState = ResourceManager.SetFontState
 
-M.LoadTTF = ResourceManager.LoadTTF
-M.LoadTTFAsync = ResourceManager.LoadTTFAsync
-M.LoadTrueTypeFont = ResourceManager.LoadTrueTypeFont
-M.LoadTrueTypeFontAsync = ResourceManager.LoadTrueTypeFontAsync
 M.CacheTTFString = ResourceManager.CacheTTFString
-
-M.LoadSound = ResourceManager.LoadSound
-M.LoadSoundAsync = ResourceManager.LoadSoundAsync
-
-M.LoadMusic = ResourceManager.LoadMusic
-M.LoadMusicAsync = ResourceManager.LoadMusicAsync
-
-M.LoadFX = ResourceManager.LoadFX
-M.LoadFXAsync = ResourceManager.LoadFXAsync
-
-M.LoadModel = ResourceManager.LoadModel
-M.LoadModelAsync = ResourceManager.LoadModelAsync
 
 M.ResourceManager = ResourceManager.ResourceManager
 
