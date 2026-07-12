@@ -13,16 +13,23 @@ local M = {}
 -- 使用 lstg.ResourceManager.createPool 创建具名资源池，
 -- 再通过 lstg.ResourceManager.setLookupOrder 设置名称查找顺序。
 --
--- 创建资源时应调用资源池对象上的 load、create 方法。
+-- 创建资源时可以调用资源池对象上的 load、create 方法，
+-- 也可以调用全局加载函数，并将资源池名称作为第一个参数。
 -- 资源依赖也改为传递资源对象，例如 createSprite 接收 ResourceTexture，
 -- loadParticle 接收 ResourceSprite，不再通过名称执行一次全局查找。
 --
 -- 迁移示例：
--- local global = lstg.ResourceManager.createPool("global")
--- local stage = lstg.ResourceManager.createPool("stage")
--- lstg.ResourceManager.setLookupOrder({ stage, global })
+-- local main = lstg.ResourceManager.createPool("main")
+-- lstg.ResourceManager.setLookupOrder({ main })
 --
--- 上述顺序与旧版的 stage 优先、global 回退行为一致。
+-- lstg.LoadTexture("main", "player", "assets/player.png", true)
+-- lstg.LoadTTF("main", "menu-font", "assets/menu.ttf", 32, 32)
+--
+-- local player_texture = main:getTexture("player")
+-- lstg.LoadImage("main", "player", player_texture, 0, 0, 64, 64)
+--
+-- 也可以使用资源池方法：
+-- main:loadTTF("small-font", "assets/menu.ttf", 16, 16)
 
 --------------------------------------------------------------------------------
 --- 资源池管理
@@ -30,6 +37,248 @@ local M = {}
 --- 加载资源时是否输出日志，引擎默认开启日志输出
 ---@param enabled boolean
 function M.SetResLoadInfo(enabled)
+end
+
+--------------------------------------------------------------------------------
+--- 按资源池名称加载资源
+
+-- 以下 API 的第一个参数为目标资源池名称。
+-- 指定的资源池不存在时，引擎会抛出
+-- "specified resource pool '<name>' was not found" 错误。
+
+---@param pool_name string
+---@param texture_name string
+---@param path string
+---@param mipmaps boolean?
+function M.LoadTexture(pool_name, texture_name, path, mipmaps)
+end
+
+---@param pool_name string
+---@param texture_name string
+---@param path string
+---@param mipmaps boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadTextureAsync(pool_name, texture_name, path, mipmaps)
+end
+
+---@param pool_name string
+---@param video_name string
+---@param path string
+---@param loop boolean?
+---@return lstg.ResourceTexture
+function M.LoadVideo(pool_name, video_name, path, loop)
+end
+
+---@param pool_name string
+---@param video_name string
+---@param path string
+---@param loop boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadVideoAsync(pool_name, video_name, path, loop)
+end
+
+---@param pool_name string
+---@param sprite_name string
+---@param texture lstg.ResourceTexture
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param a number?
+---@param b number?
+---@param rect boolean?
+function M.LoadImage(pool_name, sprite_name, texture, x, y, width, height, a, b, rect)
+end
+
+---@param pool_name string
+---@param sprite_name string
+---@param texture lstg.ResourceTexture
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadImageAsync(pool_name, sprite_name, texture, x, y, width, height, a, b, rect)
+end
+
+---@param pool_name string
+---@param animation_name string
+---@param texture lstg.ResourceTexture
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param columns integer
+---@param rows integer
+---@param interval integer
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@overload fun(pool_name:string, animation_name:string, sprites:lstg.ResourceSprite[], interval:integer, a:number?, b:number?, rect:boolean?)
+function M.LoadAnimation(pool_name, animation_name, texture, x, y, width, height, columns, rows, interval, a, b, rect)
+end
+
+---@param pool_name string
+---@param animation_name string
+---@param texture lstg.ResourceTexture
+---@param x number
+---@param y number
+---@param width number
+---@param height number
+---@param columns integer
+---@param rows integer
+---@param interval integer
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return lstg.AsyncResourceJob
+---@overload fun(pool_name:string, animation_name:string, sprites:lstg.ResourceSprite[], interval:integer, a:number?, b:number?, rect:boolean?):lstg.AsyncResourceJob
+function M.LoadAnimationAsync(pool_name, animation_name, texture, x, y, width, height, columns, rows, interval, a, b, rect)
+end
+
+---@param pool_name string
+---@param particle_name string
+---@param definition_or_path table|string
+---@param sprite lstg.ResourceSprite
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return boolean
+function M.LoadPS(pool_name, particle_name, definition_or_path, sprite, a, b, rect)
+end
+
+---@param pool_name string
+---@param particle_name string
+---@param definition_or_path table|string
+---@param sprite lstg.ResourceSprite
+---@param a number?
+---@param b number?
+---@param rect boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadPSAsync(pool_name, particle_name, definition_or_path, sprite, a, b, rect)
+end
+
+---@param pool_name string
+---@param sound_name string
+---@param path string
+---@return boolean
+function M.LoadSound(pool_name, sound_name, path)
+end
+
+---@param pool_name string
+---@param sound_name string
+---@param path string
+---@return lstg.AsyncResourceJob
+function M.LoadSoundAsync(pool_name, sound_name, path)
+end
+
+---@param pool_name string
+---@param music_name string
+---@param path string
+---@param loop_end number
+---@param loop_duration number
+---@param once_decode boolean?
+---@return boolean
+function M.LoadMusic(pool_name, music_name, path, loop_end, loop_duration, once_decode)
+end
+
+---@param pool_name string
+---@param music_name string
+---@param path string
+---@param loop_end number
+---@param loop_duration number
+---@param once_decode boolean?
+---@return lstg.AsyncResourceJob
+function M.LoadMusicAsync(pool_name, music_name, path, loop_end, loop_duration, once_decode)
+end
+
+---@param pool_name string
+---@param font_name string
+---@param path string
+---@param mipmaps boolean?
+---@return boolean
+---@overload fun(pool_name:string, font_name:string, path:string, texture_path:string, mipmaps:boolean?):boolean
+function M.LoadFont(pool_name, font_name, path, mipmaps)
+end
+
+---@param pool_name string
+---@param font_name string
+---@param path string
+---@param mipmaps boolean?
+---@return lstg.AsyncResourceJob
+---@overload fun(pool_name:string, font_name:string, path:string, texture_path:string, mipmaps:boolean?):lstg.AsyncResourceJob
+function M.LoadFontAsync(pool_name, font_name, path, mipmaps)
+end
+
+---@param pool_name string
+---@param font_name string
+---@param path string
+---@param width number
+---@param height number
+---@return boolean
+function M.LoadTTF(pool_name, font_name, path, width, height)
+end
+
+---@param pool_name string
+---@param font_name string
+---@param path string
+---@param width number
+---@param height number
+---@return lstg.AsyncResourceJob
+function M.LoadTTFAsync(pool_name, font_name, path, width, height)
+end
+
+---@param pool_name string
+---@param font_name string
+---@param fonts lstg.TrueTypeFontInfo[]
+---@return boolean
+function M.LoadTrueTypeFont(pool_name, font_name, fonts)
+end
+
+---@param pool_name string
+---@param font_name string
+---@param fonts lstg.TrueTypeFontInfo[]
+---@return lstg.AsyncResourceJob
+function M.LoadTrueTypeFontAsync(pool_name, font_name, fonts)
+end
+
+---@param pool_name string
+---@param effect_name string
+---@param path string
+---@return boolean
+function M.LoadFX(pool_name, effect_name, path)
+end
+
+---@param pool_name string
+---@param effect_name string
+---@param path string
+---@return lstg.AsyncResourceJob
+function M.LoadFXAsync(pool_name, effect_name, path)
+end
+
+---@param pool_name string
+---@param model_name string
+---@param path string
+---@return boolean
+function M.LoadModel(pool_name, model_name, path)
+end
+
+---@param pool_name string
+---@param model_name string
+---@param path string
+---@return lstg.AsyncResourceJob
+function M.LoadModelAsync(pool_name, model_name, path)
+end
+
+---@param pool_name string
+---@param render_target_name string
+---@return lstg.ResourceTexture
+---@overload fun(pool_name:string, render_target_name:string, width:integer, height:integer):lstg.ResourceTexture
+---@overload fun(pool_name:string, render_target_name:string, width:integer, height:integer, depth_buffer:boolean):lstg.ResourceTexture
+function M.CreateRenderTarget(pool_name, render_target_name)
 end
 
 ---@class lstg.ResourceManager

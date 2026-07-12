@@ -4,6 +4,7 @@
     * API
         * API change: Resource pools are now created and managed through `lstg.ResourceManager`.
         * API change: Resource loading and creation APIs are now methods of `lstg.ResourcePool`.
+        * API change: Global resource loading functions accept a resource pool name as their first argument.
 
 * LuaSTG-Retro v0.0.1 (pre-release)
     * API
